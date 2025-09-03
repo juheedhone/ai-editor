@@ -30,7 +30,7 @@ const CustomBubbleMenu = ({ editor }: Props) => {
       options={{ placement: "bottom", offset: 8 }}
       className={cn(
         "bg-accent rounded-lg px-1.5 py-1",
-        aiAction ? "size-40 min-h-fit" : ""
+        aiAction ? "h-auto max-w-lg" : ""
       )}
     >
       {!aiAction ? (
@@ -69,5 +69,24 @@ export const ShortenAiAction = ({ selectedText }: { selectedText: string }) => {
     makeAiCall();
   }, [selectedText]);
 
-  return loading ? <Loader /> : <div>{shortenedText}</div>;
+  return loading ? (
+    <Loader />
+  ) : (
+    <div className="flex h-full text-sm gap-2 p-2 border rounded-lg *:py-2 *:px-4 *:flex-1 *:space-y-1 *:min-h-full *:flex *:flex-col *:justify-between">
+      <div className="border-r">
+        <div>
+          <p className="mb-3 text-base font-semibold">Original Text:</p>
+          <p>{selectedText}</p>
+        </div>
+        <Button className="mx-auto mt-8">Decline</Button>
+      </div>
+      <div>
+        <div>
+          <p className="mb-3 text-base font-semibold">Shortened Text:</p>
+          <p>{shortenedText}</p>
+        </div>
+        <Button className="mx-auto mt-8">Accept</Button>
+      </div>
+    </div>
+  );
 };
