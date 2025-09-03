@@ -40,7 +40,11 @@ const CustomBubbleMenu = ({ editor }: Props) => {
           </Button>
         </div>
       ) : (
-        <ShortenAiAction selectedText={getSelectedText()} />
+        <ShortenAiAction
+          selectedText={getSelectedText()}
+          editor={editor}
+          onClose={() => setAiAction(undefined)}
+        />
       )}
     </BubbleMenu>
   );
@@ -48,7 +52,15 @@ const CustomBubbleMenu = ({ editor }: Props) => {
 
 export default CustomBubbleMenu;
 
-export const ShortenAiAction = ({ selectedText }: { selectedText: string }) => {
+export const ShortenAiAction = ({
+  selectedText,
+  editor,
+  onClose,
+}: {
+  selectedText: string;
+  editor: Editor;
+  onClose: () => void;
+}) => {
   const [loading, setLoading] = useState(true);
   const [shortenedText, setShortenedText] = useState<string | null>(null);
 
@@ -69,6 +81,18 @@ export const ShortenAiAction = ({ selectedText }: { selectedText: string }) => {
     makeAiCall();
   }, [selectedText]);
 
+  const handleAccept = () => {
+    const { from, to } = editor.state.selection;
+    editor
+      .chain()
+      .focus()
+      .deleteRange({ from, to })
+      .insertContent(shortenedText || "")
+      .run();
+
+    onClose();
+  };
+
   return loading ? (
     <Loader />
   ) : (
@@ -78,14 +102,18 @@ export const ShortenAiAction = ({ selectedText }: { selectedText: string }) => {
           <p className="mb-3 text-base font-semibold">Original Text:</p>
           <p>{selectedText}</p>
         </div>
-        <Button className="mx-auto mt-8">Decline</Button>
+        <Button className="mx-auto mt-8" onClick={onClose}>
+          Decline
+        </Button>
       </div>
       <div>
         <div>
           <p className="mb-3 text-base font-semibold">Shortened Text:</p>
           <p>{shortenedText}</p>
         </div>
-        <Button className="mx-auto mt-8">Accept</Button>
+        <Button className="mx-auto mt-8" onClick={handleAccept}>
+          Accept
+        </Button>
       </div>
     </div>
   );
