@@ -66,7 +66,6 @@ import { useWindowSize } from "@/hooks/use-window-size";
 
 // --- Components ---
 import { ThemeToggle } from "@/components/tiptap-templates/simple/theme-toggle";
-import { BubbleMenu } from "@tiptap/react/menus";
 
 // --- Lib ---
 import { handleImageUpload, MAX_FILE_SIZE } from "@/lib/tiptap-utils";
@@ -74,6 +73,7 @@ import { handleImageUpload, MAX_FILE_SIZE } from "@/lib/tiptap-utils";
 // --- Styles ---
 import "@/components/tiptap-templates/simple/simple-editor.scss";
 
+import CustomBubbleMenu from "@/components/CustomBubbleMenu";
 import content from "@/components/tiptap-templates/simple/data/content.json";
 
 const MainToolbarContent = ({
@@ -191,6 +191,9 @@ export function SimpleEditor() {
     "main" | "highlighter" | "link"
   >("main");
   const [showMenu, setShowMenu] = React.useState(true);
+  const [aiAction, setAiAction] = React.useState<
+    "shorten" | "edit" | undefined
+  >(undefined);
   const toolbarRef = React.useRef<HTMLDivElement>(null);
 
   const editor = useEditor({
@@ -272,18 +275,7 @@ export function SimpleEditor() {
           )}
         </Toolbar>
 
-        {editor && showMenu && (
-          <BubbleMenu
-            editor={editor}
-            options={{ placement: "bottom", offset: 8 }}
-            className="bg-accent rounded-lg px-1.5 py-1"
-          >
-            <div className="bubble-menu space-x-2 *:hover:cursor-pointer flex">
-              <Button type="button">Shorten</Button>
-              <Button type="button">Edit with AI</Button>
-            </div>
-          </BubbleMenu>
-        )}
+        {editor && showMenu && <CustomBubbleMenu editor={editor} />}
         <EditorContent
           editor={editor}
           role="presentation"
