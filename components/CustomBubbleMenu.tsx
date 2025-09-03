@@ -2,24 +2,35 @@ import { Button } from "@/components/tiptap-ui-primitive/button";
 import { cn } from "@/lib/utils";
 import { Editor } from "@tiptap/react";
 import { BubbleMenu } from "@tiptap/react/menus";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Loader } from "./ui/loader";
 
 interface Props {
   editor: Editor;
 }
 const CustomBubbleMenu = ({ editor }: Props) => {
-  const [aiAction, setAiAction] = useState<"shorten" | "edit" | undefined>(
-    undefined
-  );
+  const [aiAction, setAiAction] = useState<"shorten" | undefined>(undefined);
+
+  const getSelectedText = () => {
+    const { from, to } = editor.state.selection;
+    const selectedText = editor.state.doc.textBetween(from, to, " ");
+    return selectedText;
+  };
 
   return (
     <BubbleMenu
       editor={editor}
+      shouldShow={({ editor }) => {
+        if (!editor.state.selection.empty) {
+          return true;
+        }
+        setAiAction(undefined);
+        return false;
+      }}
       options={{ placement: "bottom", offset: 8 }}
       className={cn(
         "bg-accent rounded-lg px-1.5 py-1",
-        aiAction ? "size-40" : ""
+        aiAction ? "size-40 min-h-fit" : ""
       )}
     >
       {!aiAction ? (
@@ -27,14 +38,9 @@ const CustomBubbleMenu = ({ editor }: Props) => {
           <Button type="button" onClick={() => setAiAction("shorten")}>
             Shorten
           </Button>
-          <Button type="button" onClick={() => setAiAction("edit")}>
-            Edit with AI
-          </Button>
         </div>
-      ) : aiAction === "shorten" ? (
-        <ShortenAiAction />
       ) : (
-        <EditAiAction />
+        <ShortenAiAction selectedText={getSelectedText()} />
       )}
     </BubbleMenu>
   );
@@ -42,14 +48,26 @@ const CustomBubbleMenu = ({ editor }: Props) => {
 
 export default CustomBubbleMenu;
 
-const ShortenAiAction = () => {
+export const ShortenAiAction = ({ selectedText }: { selectedText: string }) => {
   const [loading, setLoading] = useState(true);
+  const [shortenedText, setShortenedText] = useState<string | null>(null);
 
-  return loading ? <Loader /> : <div>Shorten AI Action</div>;
-};
+  const makeAiCall = async () => {
+    const res = await fetch("/api/shorten", {
+      method: "POST",
+      body: JSON.stringify({
+        prompt: selectedText,
+      }),
+    });
 
-const EditAiAction = () => {
-  const [loading, setLoading] = useState(true);
+    const { text } = await res.json();
+    setShortenedText(text);
+    setLoading(false);
+  };
 
-  return <div>Edit AI Action</div>;
+  useEffect(() => {
+    makeAiCall();
+  }, [selectedText]);
+
+  return loading ? <Loader /> : <div>{shortenedText}</div>;
 };

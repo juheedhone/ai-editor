@@ -7,10 +7,11 @@ import { useState } from "react";
 const page = () => {
   const [input, setInput] = useState("");
   const { messages, sendMessage } = useChat();
+
   return (
     <div className="flex">
       <SimpleEditor />
-      
+
       <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
         {messages.map((message) => (
           <div key={message.id} className="whitespace-pre-wrap">

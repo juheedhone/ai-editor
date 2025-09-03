@@ -1,6 +1,11 @@
 "use client";
 
-import { EditorContent, EditorContext, useEditor } from "@tiptap/react";
+import {
+  EditorContent,
+  EditorContext,
+  useEditor,
+  type Editor,
+} from "@tiptap/react";
 import * as React from "react";
 
 // --- Tiptap Core Extensions ---
