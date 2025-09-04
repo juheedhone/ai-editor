@@ -64,7 +64,7 @@ const Page = () => {
               value={input}
               placeholder="Ask anything"
               onChange={(e) => setInput(e.currentTarget.value)}
-              className="outline-none"
+              className="outline-none w-full"
             />
             <button
               type="submit"
