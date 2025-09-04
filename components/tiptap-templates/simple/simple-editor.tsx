@@ -254,7 +254,7 @@ export function SimpleEditor() {
   }, [isMobile, mobileView]);
 
   return (
-    <div className="simple-editor-wrapper">
+    <div className="simple-editor-wrapper flex-2/3">
       <EditorContext.Provider value={{ editor }}>
         <Toolbar
           ref={toolbarRef}
