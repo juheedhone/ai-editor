@@ -12,7 +12,7 @@ import { useChat } from "@ai-sdk/react";
 import { ArrowUp } from "lucide-react";
 import { useState } from "react";
 
-const page = () => {
+const Page = () => {
   const [input, setInput] = useState("");
   const { messages, sendMessage, status } = useChat();
 
@@ -81,4 +81,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
